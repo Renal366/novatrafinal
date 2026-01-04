@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pembayaran - NOVATRASHOP</title>
+    <style>
+        body { background-color: #3e1b9b; color: white; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .top-bar { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px 10px 0 10px; }
+        .header { font-weight: 900; letter-spacing: 2px; font-size: 18px; margin-left: auto; margin-right: auto; }
+        .back-link { text-decoration: none; color: white; display: flex; align-items: center; }
+        .back-icon { width: 35px; height: 35px; filter: brightness(1.2); }
+        .banner-img { width: 95%; max-width: 380px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); height: 160px; object-fit: cover; }
+        .pay-card { background-color: #2b146e; width: 95%; max-width: 380px; padding: 20px; border-radius: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
+        .qris-box { background: white; padding: 10px; border-radius: 15px; display: inline-block; margin-bottom: 15px; }
+        .qris-img { width: 160px; height: 160px; display: block; }
+        .label { text-align: left; font-size: 12px; margin: 10px 0 5px 15px; opacity: 0.8; font-weight: 600; }
+        .value-box { background: white; color: black; padding: 14px; border-radius: 30px; font-weight: 900; margin-bottom: 12px; font-size: 15px; text-transform: uppercase; }
+        .btn-bayar { background: #1a0b4d; color: white; width: 100%; padding: 18px; border-radius: 35px; border: none; font-weight: 900; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.3s; }
+        .btn-bayar:hover { background: #3e1b9b; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="header">NOVATRASHOP.COM 💎</div>
+        <a id="backBtn" href="#" class="back-link">
+            <img src="img/panah_kembali.png" class="back-icon" alt="Kembali"> 
+        </a>
+    </div>
+
+    <img id="gameBanner" src="" class="banner-img">
+
+    <div class="pay-card">
+        <p style="font-size: 13px; margin-bottom: 15px; font-weight: 600;">Metode Pembayaran</p>
+        <div class="qris-box">
+            <img id="qrisImg" src="img/qris.png" class="qris-img">
+        </div>
+        
+        <div class="label">Jumlah Item</div>
+        <div id="itemName" class="value-box">Loading...</div>
+        
+        <div class="label">Harga</div>
+        <div id="itemPrice" class="value-box">Loading...</div>
+        
+        <button class="btn-bayar" onclick="gasBayar()">BAYAR</button>
+    </div>
+
+    <script>
+        // Variabel untuk menyimpan nama metode pambayaran secara global
+        let globalMetodeName = "QRIS";
+
+        async function loadFinalDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const gId = params.get('gameId');    
+            const pId = params.get('prodId');   
+            const mId = params.get('metodeId'); 
+
+            document.getElementById('backBtn').href = `checkout.html?id=${gId}`;
+
+            try {
+                // 1. Banner
+                const resG = await fetch(`http://127.0.0.1:5000/api/games/${gId}`);
+                const game = await resG.json();
+                if (game && game.banner) {
+                    document.getElementById('gameBanner').src = `img/${game.banner}`;
+                }
+
+                // 2. Produk
+                const resP = await fetch(`http://127.0.0.1:5000/api/product-detail/${pId}`);
+                const produk = await resP.json();
+                if (produk && !produk.error) {
+                    document.getElementById('itemName').innerText = produk.nama_paket;
+                    document.getElementById('itemPrice').innerText = `RP.${Number(produk.harga).toLocaleString('id-ID')}`;
+                }
+
+                // 3. Barcode & Simpan Nama Metode
+                const resM = await fetch(`http://127.0.0.1:5000/api/metode-pembayaran`);
+                const listM = await resM.json();
+                const selected = listM.find(item => item.id_metode == mId);
+
+                if (selected) {
+                    globalMetodeName = selected.nama_metode; // Simpan nama metodenya di sini
+                    if (selected.barcode) {
+                        document.getElementById('qrisImg').src = `img/${selected.barcode}`; 
+                    }
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        loadFinalDetail();
+
+        async function gasBayar() {
+            const params = new URLSearchParams(window.location.search);
+            const userId = params.get('userId');
+            const itemName = document.getElementById('itemName').innerText;
+            const itemPrice = document.getElementById('itemPrice').innerText;
+
+            const data = {
+                id_produk: params.get('prodId'),
+                id_metode: params.get('metodeId'),
+                user_game_id: userId,
+                total_harga: itemPrice.replace(/\D/g,''),
+                status: 'Pending'
+            };
+
+            try {
+                // Kirim data ke API transaksi
+                const res = await fetch('http://127.0.0.1:5000/api/transaksi', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+
+               if(res.ok) {
+    // Ambil teks dari box agar datanya akurat
+    const uId = params.get('userId');
+    const item = document.getElementById('itemName').innerText;
+    const harga = document.getElementById('itemPrice').innerText;
+
+    // Redirect sambil bawa data ke success.html
+    window.location.href = `success.html?userId=${uId}&item=${encodeURIComponent(item)}&metode=${encodeURIComponent(globalMetodeName)}`;
+} else {
+                    alert("Gagal memproses transaksi di server.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Koneksi Error! Pastikan API Backend jalan.");
+            }
+        }
+    </script>
+</body>
+</html>
