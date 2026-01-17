@@ -100,11 +100,12 @@
         </div>
 
     <script>
+        const API_URL = 'https://novatra.vercel.app/api';
         document.addEventListener('DOMContentLoaded', async () => {
             const gameContainer = document.getElementById('gameContainer');
 
             try {
-            const res = await fetch('https://novatra.vercel.app/api/games');
+            const res = await fetch(`${API_URL}/games`);
             const games = await res.json(); // Pastikan ini 'res', bukan 'response' atau lainnya
             if (games.length === 0) {
                 gameContainer.innerHTML = '<p>Data game kosong di database!</p>';
