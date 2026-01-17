@@ -104,10 +104,7 @@
             const gameContainer = document.getElementById('gameContainer');
 
             try {
-                // Ambil data dari backend lo
-                // Pastiin barisnya kayak gini, jangan port 3000 atau yang lain
-                // Ambil data dari backend lo
-            const res = await fetch('http://localhost:5000/api/games');
+            const res = await fetch('https://novatra.vercel.app/api/games');
             const games = await res.json(); // Pastikan ini 'res', bukan 'response' atau lainnya
             if (games.length === 0) {
                 gameContainer.innerHTML = '<p>Data game kosong di database!</p>';
