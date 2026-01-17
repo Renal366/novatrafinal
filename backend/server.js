@@ -14,7 +14,7 @@ const pool = new Pool({
   }
 });
 
-app.post('/api/register', async (req, res) => {
+app.post('/register', async (req, res) => {
     try {
         const { email, password } = req.body;
         // Pake tanda kutip dua "user" karena 'user' adalah reserved word di Postgres
@@ -26,7 +26,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-app.post('/api/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const result = await pool.query('SELECT * FROM "user" WHERE email = $1 AND password = $2', [email, password]);
