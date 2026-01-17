@@ -1,2 +1,2 @@
-// Memanggil server.js lo yang asli
-module.exports = require('../backend/server.js');
+const app = require('../backend/server.js');
+module.exports = app;
