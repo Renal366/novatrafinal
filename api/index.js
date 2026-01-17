@@ -20,6 +20,8 @@ app.post('/api/register', async (req, res) => {
         res.status(200).json({ success: true, message: "DAFTAR BERHASIL!" });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
+      console.error("ERROR DATABASE:", err.message); // Ini bakal muncul di Log Vercel
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 
