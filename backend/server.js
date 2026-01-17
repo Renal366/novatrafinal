@@ -9,7 +9,9 @@ app.use(express.json());
 // Koneksi Supabase
 const pool = new Pool({
   connectionString: "postgresql://postgres:Renaldicahya17@db.bbjyifnzvrzzxospplpa.supabase.co:5432/postgres",
-  ssl: { rejectUnauthorized: false } 
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Endpoint Register
