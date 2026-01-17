@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - NOVATRASHOP</title>
+    <style>
+        /* RESET & BASE */
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #3e1b9b; 
+            color: white; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding-bottom: 50px;
+        }
+
+        /* HEADER - Teks di tengah, Ikon di kanan */
+        .header { 
+            width: 100%; 
+            max-width: 400px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 30px 20px 10px 20px; 
+            position: relative; 
+        }
+        .logo { 
+            font-weight: 900; 
+            font-size: 15px; 
+            letter-spacing: 1px; 
+        }
+        .home-icon { 
+            position: absolute; 
+            right: 20px; 
+            display: flex; 
+            align-items: center; 
+        }
+
+        /* BANNER LANDSCAPE - Biar Gak Pecah */
+        .banner-box { 
+            width: 95%; 
+            max-width: 380px; 
+            margin: 20px auto 0 auto; 
+        }
+        .banner-img { 
+            width: 100%; 
+            border-radius: 10px; 
+            object-fit: cover; 
+            height: 180px; 
+            border: 1px solid rgba(255,255,255,0.2); 
+        }
+
+        /* SECTION USER ID */
+        .form-section { 
+            width: 90%; 
+            max-width: 380px; 
+            margin-top: 20px; 
+        }
+        .form-section label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            font-size: 14px; 
+        }
+        .input-id { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 10px; 
+            border: none; 
+            font-size: 16px; 
+            outline: none; 
+            color: #000;
+        }
+
+        /* STRIP ABU-ABU "Nominal item" */
+        .label-nominal { 
+            background: #cccccc; 
+            color: #333; 
+            width: 90%; 
+            max-width: 380px; 
+            padding: 6px 15px; 
+            font-size: 12px; 
+            font-weight: bold; 
+            margin-top: 25px; 
+            text-align: left;
+        }
+
+        /* GRID NOMINAL - 3 Kolom Rapi */
+        .nominal-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            width: 90%; 
+            max-width: 380px; 
+            margin-top: 15px; 
+        }
+        .nominal-item { 
+            background: #d9d9d9; 
+            color: black; 
+            padding: 15px 5px; 
+            border-radius: 8px; 
+            text-align: center; 
+            cursor: pointer; 
+            border: 2.5px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .nominal-item.active { 
+            border-color: white; 
+            background: #ffcc00; 
+            transform: scale(1.03);
+        }
+        .nominal-item p { 
+            margin: 0; 
+            font-size: 10px; 
+            font-weight: bold; 
+            line-height: 1.2;
+        }
+        .nominal-item img { 
+            width: 25px; 
+            margin: 8px 0; 
+        }
+        .nominal-item b { 
+            font-size: 11px; 
+            display: block; 
+        }
+
+        /* TOMBOL BAYAR SANGAR */
+        .btn-bayar { 
+            background: #2b146e; 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            width: 85%; 
+            max-width: 360px; 
+            border-radius: 40px; 
+            font-weight: 900; 
+            margin-top: 45px; 
+            cursor: pointer; 
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">NOVATRASHOP.COM 💎</div>
+        <a href="dashboard.html" class="home-icon">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="white">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+        </a>
+    </div>
+
+    <div class="banner-box">
+    <img id="gameBanner" src="" class="banner-img">
+    <h2 id="gameName" style="text-align: center; font-size: 18px; margin-top: 10px;"></h2>
+</div>
+
+    <div class="form-section">
+        <label>User ID</label>
+        <input type="text" id="userId" class="input-id" placeholder="Masukkan ID">
+    </div>
+
+    <div class="label-nominal">Nominal item</div>
+
+    <div class="nominal-grid" id="nominalContainer">
+        </div>
+
+    <button class="btn-bayar" onclick="prosesBayar()">BAYAR SEKARANG</button>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const gameId = params.get('id') || 1; 
+        let selectedProduct = null;
+
+async function loadData() {
+    const params = new URLSearchParams(window.location.search);
+    const gameId = params.get('id');
+
+    if (!gameId) {
+        window.location.href = 'dashboard.html';
+        return;
+    }
+
+    try {
+        // 1. Ambil Detail Game (Banner, Nama, & Icon) sesuai Schema
+        const gRes = await fetch(`http://localhost:5000/api/games/${gameId}`);
+        if (!gRes.ok) throw new Error("Game tidak ditemukan");
+        const game = await gRes.json();
+
+        // Update UI Banner & Nama Game
+        // Pastikan file gambar ada di folder 'img/'
+        const bannerImg = document.getElementById('gameBanner');
+        bannerImg.src = `img/${game.banner}`; 
+        bannerImg.onerror = () => bannerImg.src = 'img/default-banner.jpg'; // Backup jika gambar ga ada
+        
+        document.getElementById('gameName').innerText = game.nama_game;
+
+        // 2. Ambil List Produk (Token/Diamond) berdasarkan ID Game
+        // Gunakan route khusus produk per game yang sudah kita buat di backend
+        const pRes = await fetch(`http://localhost:5000/api/products-by-game/${gameId}`);
+        if (!pRes.ok) throw new Error("Gagal mengambil produk");
+        const products = await pRes.json();
+
+        const container = document.getElementById('nominalContainer');
+        
+        // Cek jika produk ada
+        if (products.length === 0) {
+            container.innerHTML = "<p>Produk belum tersedia untuk game ini.</p>";
+            return;
+        }
+
+        container.innerHTML = products.map(p => `
+            <div class="nominal-item" onclick="pilih(this, ${p.id_produk})">
+                <p style="font-size: 10px; font-weight: bold; margin: 0;">${p.nama_paket}</p>
+                <img src="img/${game.icon}" style="width: 30px; height: 30px; object-fit: contain; margin: 5px 0;">
+                <b style="font-size: 12px;">Rp ${Number(p.harga).toLocaleString('id-ID')}</b>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error(err);
+        // Alert ini muncul kalau salah satu fetch di atas gagal atau database kosong
+        alert("Gagal memuat data! Pastikan XAMPP nyala dan ID Game " + gameId + " ada di database.");
+    }
+}
+        function pilih(el, id) {
+            document.querySelectorAll('.nominal-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            selectedProduct = id;
+        }
+
+       function prosesBayar() {
+    const userGameId = document.getElementById('userId').value;
+    if(!userGameId) return alert("Isi User ID dulu!");
+    if(!selectedProduct) return alert("Pilih nominal diamond-nya!");
+    
+    // Lempar data ke halaman payment.html
+    window.location.href = `payment.html?gameId=${gameId}&userId=${userGameId}&prodId=${selectedProduct}`;
+}
+
+        loadData();
+    </script>
+</body>
+</html>

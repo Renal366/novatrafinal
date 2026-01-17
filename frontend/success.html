@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Success - NOVATRASHOP</title>
+    <style>
+        body { background-color: #3e1b9b; color: white; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; }
+        .header-nav { width: 100%; max-width: 400px; display: flex; justify-content: center; align-items: center; position: relative; margin: 20px 0 40px 0; }
+        .brand { font-weight: 900; letter-spacing: 2px; font-size: 18px; }
+        .home-btn { position: absolute; right: 0; text-decoration: none; width: 25px; height: 25px; background-color: white; clip-path: polygon(50% 0%, 100% 40%, 100% 100%, 70% 100%, 70% 60%, 30% 60%, 30% 100%, 0% 100%, 0% 40%); }
+        .check-icon { background: #4CAF50; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
+        .title { font-weight: 900; letter-spacing: 1px; font-size: 18px; margin-bottom: 5px; }
+        .subtitle { opacity: 0.8; font-size: 11px; margin-bottom: 30px; text-align: center; }
+        .card { background-color: #2b146e; width: 95%; max-width: 380px; padding: 25px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .row { margin-bottom: 15px; }
+        .label { font-size: 11px; margin-left: 10px; margin-bottom: 5px; opacity: 0.8; font-weight: 600; text-align: left; }
+        .box { background: white; color: black; padding: 14px; border-radius: 15px; font-weight: 800; font-size: 13px; text-align: left; min-height: 20px; }
+   /* CSS Animasi Loading Spinner */
+    .status-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .spinner {
+        width: 30px;
+        height: 30px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 10px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .subtitle {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+</style>
+</head>
+<body>
+
+    <div class="header-nav">
+        <div class="brand">NOVATRASHOP.COM 💎</div>
+        <a href="dashboard.html" class="home-btn"></a>
+    </div>
+
+    <div class="check-icon">✓</div>
+    <div class="title">PAYMENT SUCCESSFULLY</div>
+    <div class="status-container">
+    <div id="loader" class="spinner"></div> <div id="statusText" class="subtitle">Processing your order...</div>
+    </div>
+
+    <div class="card">
+        <div class="row">
+            <div class="label">User ID</div>
+            <div id="uId" class="box">-</div>
+        </div>
+        <div class="row">
+            <div class="label">Nominal Item</div>
+            <div id="uItem" class="box">-</div>
+        </div>
+        <div class="row">
+            <div class="label">Metode Pembayaran</div>
+            <div id="uMetode" class="box">-</div>
+        </div>
+        <div class="row">
+            <div class="label">Tanggal</div>
+            <div id="uTanggal" class="box">-</div>
+        </div>
+    </div>
+
+<script>
+    function tampilkanDetail() {
+        const params = new URLSearchParams(window.location.search);
+        
+        // Ambil data dari URL
+        const userId = params.get('userId');
+        const item = params.get('item');
+        const metode = params.get('metode');
+
+        // Isi data ke box
+        if (userId) document.getElementById('uId').innerText = userId;
+        if (item) document.getElementById('uItem').innerText = decodeURIComponent(item);
+        if (metode) document.getElementById('uMetode').innerText = decodeURIComponent(metode);
+
+        // Set Tanggal Otomatis
+        const tgl = new Date();
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('uTanggal').innerText = tgl.toLocaleDateString('id-ID', options);
+
+        // LOGIKA LOADING: Setelah 2 detik, hilangkan loading dan ganti teks
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none'; // Sembunyikan spinner
+            document.getElementById('statusText').innerText = "Order successfully NovatraShop";
+            document.getElementById('statusText').style.color = "#4CAF50"; // Ubah warna jadi hijau
+        }, 2500);
+    }
+
+    window.onload = tampilkanDetail;
+</script>
+</body>
+</html>

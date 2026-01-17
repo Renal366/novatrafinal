@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metode Pembayaran - NOVATRASHOP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background-color: #3e1b9b; 
+            color: white; 
+            font-family: 'Inter', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+        }
+
+        /* Header Logo */
+        .header { 
+            padding: 30px 0 20px 0; 
+            font-weight: 900; 
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Banner Box */
+        .banner-box { width: 90%; max-width: 380px; margin-bottom: 25px; }
+        .banner-img { 
+            width: 100%; 
+            border-radius: 20px; 
+            height: 180px; 
+            object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .title { 
+            font-weight: 900; 
+            font-size: 12px; 
+            margin-bottom: 20px; 
+            text-transform: uppercase;
+        }
+
+        /* Container Pembayaran (Box Melengkung) */
+        .payment-container {
+            background-color: #2b146e;
+            width: 90%;
+            max-width: 380px;
+            padding: 30px 20px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Item Pembayaran */
+        .payment-item {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .payment-item:hover { transform: scale(1.02); }
+        .payment-item img { width: 35px; margin-right: 20px; }
+        .payment-item span { 
+            color: black; 
+            font-weight: 900; 
+            font-size: 14px; 
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">NOVATRASHOP.COM 💎</div>
+
+    <div class="banner-box">
+        <img id="gameBanner" src="" class="banner-img">
+    </div>
+
+    <div class="title">METODE PEMBAYARAN</div>
+
+   <div class="payment-container">
+    <div class="payment-item" onclick="prosesAkhir(1, 'DANA')">
+        <img src="img/dana.png" alt="DANA">
+        <span>DANA</span>
+    </div>
+
+    <div class="payment-item" onclick="prosesAkhir(2, 'GOPAY')">
+        <img src="img/gopay.png" alt="GOPAY">
+        <span>GOPAY</span>
+    </div>
+
+    <div class="payment-item" onclick="prosesAkhir(3, 'QRIS')">
+        <img src="img/qris.png" alt="QRIS">
+        <span>QRIS</span>
+    </div>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const gameId = params.get('gameId');
+    const userId = params.get('userId');
+    const prodId = params.get('prodId');
+
+    async function init() {
+        if(!gameId) {
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/games/${gameId}`);
+            const game = await res.json();
+            // Ambil kolom 'banner' sesuai schema
+            document.getElementById('gameBanner').src = `img/${game.banner}`; 
+        } catch (err) {
+            console.error("Gagal load banner");
+        }
+    }
+
+    // NAMA FUNGSI HARUS SAMA DENGAN ONCLICK DI ATAS ('prosesAkhir')
+    async function prosesAkhir(idMetode, namaMetode) {
+        // Cek data di console browser (F12) buat mastiin datanya ada
+        console.log("Redirecting with:", {gameId, userId, prodId, idMetode});
+
+        if(!userId || !prodId) {
+            alert("Harap masukkan User ID dan Pilih Paket terlebih dahulu!");
+            return;
+        }
+
+        // Langsung arahkan ke halaman checkout final
+        window.location.href = `checkout-final.html?gameId=${gameId}&userId=${userId}&prodId=${prodId}&metodeId=${idMetode}&namaMetode=${namaMetode}`;
+    }
+
+    init();
+</script>
+</body>
+</html>
