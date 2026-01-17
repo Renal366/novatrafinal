@@ -8,7 +8,7 @@ app.use(express.json());
 
 // Koneksi Supabase lo yang sudah bener tadi
 const pool = new Pool({
-  connectionString: "postgresql://postgres:renaldicahya@db.bbjyifnzvzzxospplpa.supabase.co:5432/postgres",
+  connectionString: "postgresql://postgres:Renaldicahya17@db.bbjyifnzvzzxospplpa.supabase.co:5432/postgres",
   ssl: { rejectUnauthorized: false } 
 });
 
