@@ -104,6 +104,7 @@
 </div>
 
 <script>
+    const API_URL = 'https://novatra.vercel.app/api';
     const params = new URLSearchParams(window.location.search);
     const gameId = params.get('gameId');
     const userId = params.get('userId');
@@ -116,7 +117,7 @@
         }
 
         try {
-            const res = await fetch(`${API_URL}/games/${gameId}`);
+            const res = await fetch(`${API_URL}/games`);
             const game = await res.json();
             // Ambil kolom 'banner' sesuai schema
             document.getElementById('gameBanner').src = `img/${game.banner}`; 
