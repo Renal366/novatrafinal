@@ -15,7 +15,8 @@ app.post('/api/register', async (req, res) => {
     try {
         const { email, password } = req.body;
         // Pake kutip dua di "user" karena itu keyword sistem di Postgres
-        await pool.query('INSERT INTO "user" (email, password) VALUES ($1, $2)', [email, password]);
+        
+        await pool.query('INSERT INTO users (email, password) VALUES ($1, $2)', [email, password]);
         res.status(200).json({ success: true, message: "DAFTAR BERHASIL!" });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
