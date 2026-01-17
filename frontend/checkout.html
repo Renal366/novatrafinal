@@ -194,7 +194,7 @@ async function loadData() {
 
     try {
         // 1. Ambil Detail Game (Banner, Nama, & Icon) sesuai Schema
-        const gRes = await fetch(`http://localhost:5000/api/games/${gameId}`);
+        const gRes = await fetch(`${API_URL}/games/${gameId}`);
         if (!gRes.ok) throw new Error("Game tidak ditemukan");
         const game = await gRes.json();
 
