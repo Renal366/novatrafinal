@@ -8,7 +8,7 @@ app.use(express.json());
 
 // KONEKSI DATABASE - Pastikan tanda kutip di awal dan akhir link ada semua!
 const pool = new Pool({
-  connectionString: "postgresql://postgres:novatracahya@db.ipuqtuobbyqfenfjaiik.supabase.co:5432/postgres
+  connectionString: process.env.DATABASE_URL, // Dia bakal ambil data dari settingan Vercel
   ssl: { 
     rejectUnauthorized: false 
   }
