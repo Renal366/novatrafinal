@@ -46,6 +46,7 @@
     </div>
 
     <script>
+        const API_URL = 'https://novatra.vercel.app/api';
         // Variabel untuk menyimpan nama metode pambayaran secara global
         let globalMetodeName = "QRIS";
 
@@ -57,26 +58,26 @@
 
             document.getElementById('backBtn').href = `checkout.html?id=${gId}`;
 
-            try {
-                // 1. Banner
-                const resG = await fetch(`http://127.0.0.1:5000/api/games/${gId}`);
-                const game = await resG.json();
-                if (game && game.banner) {
-                    document.getElementById('gameBanner').src = `img/${game.banner}`;
-                }
+        try {
+    // 1. Banner (Ini udah bener pake API_URL)
+    const resG = await fetch(`${API_URL}/games/${gId}`);
+    const game = await resG.json();
+    if (game && game.banner) {
+        document.getElementById('gameBanner').src = `img/${game.banner}`;
+    }
 
-                // 2. Produk
-                const resP = await fetch(`http://127.0.0.1:5000/api/product-detail/${pId}`);
-                const produk = await resP.json();
-                if (produk && !produk.error) {
-                    document.getElementById('itemName').innerText = produk.nama_paket;
-                    document.getElementById('itemPrice').innerText = `RP.${Number(produk.harga).toLocaleString('id-ID')}`;
-                }
+    // 2. Produk (GANTI: pake API_URL)
+    const resP = await fetch(`${API_URL}/product-detail/${pId}`);
+    const produk = await resP.json();
+    if (produk && !produk.error) {
+        document.getElementById('itemName').innerText = produk.nama_paket;
+        document.getElementById('itemPrice').innerText = `RP.${Number(produk.harga).toLocaleString('id-ID')}`;
+    }
 
-                // 3. Barcode & Simpan Nama Metode
-                const resM = await fetch(`http://127.0.0.1:5000/api/metode-pembayaran`);
-                const listM = await resM.json();
-                const selected = listM.find(item => item.id_metode == mId);
+    // 3. Barcode (GANTI: pake API_URL)
+    const resM = await fetch(`${API_URL}/metode-pembayaran`);
+    const listM = await resM.json();
+    const selected = listM.find(item => item.id_metode == mId););
 
                 if (selected) {
                     globalMetodeName = selected.nama_metode; // Simpan nama metodenya di sini
