@@ -1,5 +1,5 @@
 // GANTI BARIS PERTAMA INI:
-const API_URL = 'https://novatrafinal.vercel.app/api'; 
+const API_URL = 'https://novatra.vercel.app/api'; 
 
 // Handle Klik Tab (Sign Up / Login)
 document.getElementById('tabSignup').addEventListener('click', () => {
