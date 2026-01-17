@@ -116,7 +116,7 @@
         }
 
         try {
-            const res = await fetch(`http://localhost:5000/api/games/${gameId}`);
+            const res = await fetch(`${API_URL}/games/${gameId}`);
             const game = await res.json();
             // Ambil kolom 'banner' sesuai schema
             document.getElementById('gameBanner').src = `img/${game.banner}`; 
