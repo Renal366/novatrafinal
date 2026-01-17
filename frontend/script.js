@@ -1,34 +1,26 @@
-const API_URL = 'https://novatra.vercel.app/api'; // TAMBAHKAN /api DI SINI
+const API_URL = 'https://novatra.vercel.app/api'; 
 
-// Handle Klik Tab (Sign Up / Login)
-document.getElementById('tabSignup').addEventListener('click', () => {
-    document.getElementById('tabSignup').className = 'tab active';
-    document.getElementById('tabLogin').className = 'tab inactive';
-    document.getElementById('mainBtn').innerText = 'Sign up';
-});
-
-document.getElementById('tabLogin').addEventListener('click', () => {
-    document.getElementById('tabLogin').className = 'tab active';
-    document.getElementById('tabSignup').className = 'tab inactive';
-    document.getElementById('mainBtn').innerText = 'Login';
-});
-
-// Handle Submit Tombol Utama
 document.getElementById('mainBtn').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    // Pakai trim() biar nggak ada spasi nggak sengaja
-    const mode = document.getElementById('mainBtn').innerText.toLowerCase().trim().replace(" ", ""); 
     
-    // Sesuaikan endpoint (register atau login)
-    const endpoint = mode === 'signup' ? '/register' : '/login';
+    // Perbaikan: Pakai includes supaya lebih akurat deteksi mode-nya
+    const isSignup = document.getElementById('mainBtn').innerText.toLowerCase().includes('sign');
+    const endpoint = isSignup ? '/register' : '/login';
 
     try {
-        const res = await fetch(`${API_URL}${endpoint}`, { // Hasilnya: .../api/register
+        // Gabungan ini hasilnya: https://novatra.vercel.app/api/register
+        const res = await fetch(`${API_URL}${endpoint}`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
+
+        // Cek dulu kalau responnya OK (bukan 404 atau 500)
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Server Error: ${res.status}`);
+        }
 
         const data = await res.json();
 
