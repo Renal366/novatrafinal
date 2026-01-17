@@ -1,13 +1,6 @@
-const { Pool } = require('pg');
+import postgres from 'postgres'
 
-// Ambil link dari Environment Variables Vercel
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL
+const sql = postgres(connectionString)
 
-const pool = new Pool({
-  connectionString: connectionString,
-  ssl: { 
-    rejectUnauthorized: false // Wajib buat koneksi ke Supabase dari luar
-  }
-});
-
-module.exports = pool;
+export default sql
